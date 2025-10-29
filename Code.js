@@ -103,8 +103,8 @@ function generateHtmlBody(headlines, rocks, dateString) {
       color: #333333;
     }
     .container {
-      max-width: 600px;
-      margin: 0 auto;
+      max-width: 100%;
+      margin: 0;
       background-color: #ffffff;
     }
     .header {
@@ -137,6 +137,8 @@ function generateHtmlBody(headlines, rocks, dateString) {
       letter-spacing: 0.5px;
       margin: 0 0 20px 0;
       padding-bottom: 10px;
+      padding-right: 50px;
+      display: inline-block;
     }
     .section-title.headlines {
       color: ${headlineBlue};
@@ -147,7 +149,7 @@ function generateHtmlBody(headlines, rocks, dateString) {
       border-bottom: 3px solid ${secondaryGreen};
     }
     .headlines-table {
-      width: 100%;
+      width: auto;
       border-collapse: collapse;
       margin-bottom: 30px;
       border: 1px solid #000000;
@@ -160,14 +162,14 @@ function generateHtmlBody(headlines, rocks, dateString) {
       letter-spacing: 0.5px;
       background-color: ${headlineBlue};
       color: #ffffff;
-      padding: 12px 15px;
+      padding: 8px 15px;
       text-align: left;
       border: 1px solid #000000;
     }
     .headlines-table td {
       font-family: 'Open Sans', Arial, sans-serif;
       font-size: 14px;
-      padding: 12px 15px;
+      padding: 6px 15px;
       border: 1px solid #000000;
       vertical-align: top;
     }
@@ -180,10 +182,8 @@ function generateHtmlBody(headlines, rocks, dateString) {
     .headlines-table td:first-child {
       font-weight: 700;
       color: #000000;
-      width: 30%;
     }
     .headlines-table td:last-child {
-      width: 70%;
       line-height: 1.6;
       color: #000000;
     }
@@ -257,8 +257,8 @@ function generateHtmlBody(headlines, rocks, dateString) {
       <table class="headlines-table">
         <thead>
           <tr>
-            <th style="white-space: nowrap; width: 30%; text-align: center;">Team Member</th>
-            <th style="width: 70%;">Headline</th>
+            <th style="white-space: nowrap; text-align: center;">Team Member</th>
+            <th>Headline</th>
           </tr>
         </thead>
         <tbody>`;
@@ -273,8 +273,8 @@ function generateHtmlBody(headlines, rocks, dateString) {
         const bgColor = (rowIndex % 2 === 0) ? '#f0f0f0' : '#ffffff';
         html += `
           <tr style="background-color: ${bgColor};">
-            <td style="font-family: 'Open Sans', Arial, sans-serif; font-weight: 700; color: #000000; width: 30%; text-align: center;"><strong>${item.owner}</strong></td>
-            <td style="font-family: 'Open Sans', Arial, sans-serif; color: #000000; width: 70%;">${headlinePart.trim()}</td>
+            <td style="font-family: 'Open Sans', Arial, sans-serif; font-weight: 700; color: #000000; text-align: center;"><strong>${item.owner}</strong></td>
+            <td style="font-family: 'Open Sans', Arial, sans-serif; color: #000000;">${headlinePart.trim()}</td>
           </tr>`;
         rowIndex++;
       });
@@ -294,15 +294,92 @@ function generateHtmlBody(headlines, rocks, dateString) {
       <h2 class="section-title rocks">Rock Progress</h2>`;
 
   if (rocks.length > 0) {
-    rocks.forEach((item, index) => {
+    html += `
+      <table class="rocks-table" style="width: auto; border-collapse: collapse; border: 1px solid #000000;">
+        <thead>
+          <tr>
+            <th style="font-family: 'Oswald', Arial, sans-serif; font-size: 16px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; background-color: ${secondaryGreen}; color: #ffffff; padding: 8px 15px; text-align: center; border: 1px solid #000000; white-space: nowrap;">Team Member</th>
+            <th style="font-family: 'Oswald', Arial, sans-serif; font-size: 16px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; background-color: ${secondaryGreen}; color: #ffffff; padding: 8px 15px; text-align: left; border: 1px solid #000000;">Rock</th>
+            <th style="font-family: 'Oswald', Arial, sans-serif; font-size: 16px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; background-color: ${secondaryGreen}; color: #ffffff; padding: 8px 15px; text-align: center; border: 1px solid #000000;">Goal</th>
+            <th style="font-family: 'Oswald', Arial, sans-serif; font-size: 16px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; background-color: ${secondaryGreen}; color: #ffffff; padding: 8px 15px; text-align: center; border: 1px solid #000000;">Progress</th>
+          </tr>
+        </thead>
+        <tbody>`;
+
+    // Helper function to format numbers with thousands separator
+    const formatNumber = (value) => {
+      if (!value && value !== 0) return value;
+      const strValue = value.toString().trim();
+
+      // Check if value contains a number
+      const numberMatch = strValue.match(/[\d,]+/);
+      if (numberMatch) {
+        // Extract the number and remove existing commas
+        const numStr = numberMatch[0].replace(/,/g, '');
+        const num = parseFloat(numStr);
+
+        if (!isNaN(num)) {
+          // Format with thousands separator
+          const formattedNum = num.toLocaleString('en-US');
+          // Replace the number in the original string
+          return strValue.replace(numberMatch[0], formattedNum);
+        }
+      }
+      return strValue;
+    };
+
+    let rockRowIndex = 0;
+    rocks.forEach((item) => {
+      const bgColor = (rockRowIndex % 2 === 0) ? '#f0f0f0' : '#ffffff';
+
+      // Split rockOwner by " - " to separate owner and rock name
+      const parts = item.rockOwner.toString().split(' - ');
+      const owner = parts.length > 1 ? parts[0].trim() : item.rockOwner;
+      const rockName = parts.length > 1 ? parts.slice(1).join(' - ').trim() : '';
+
+      // Format goal with thousands separator
+      let goalValue = formatNumber(item.goal);
+
+      // Get progress value, ensuring 0 or empty displays as "0"
+      let progressValue = item.progress;
+      if (!progressValue || progressValue.toString().trim() === '' || progressValue === 0 || progressValue === '0') {
+        progressValue = '0';
+      } else {
+        progressValue = formatNumber(item.progress);
+      }
+
+      // Determine progress color based on goal completion
+      let progressColor = '#000000'; // default black
+      const goalStr = item.goal.toString().toLowerCase();
+      const progressStr = progressValue.toLowerCase();
+
+      // Try to extract numeric values for comparison
+      const goalMatch = item.goal.toString().match(/[\d,]+/);
+      const progressMatch = progressValue.match(/[\d,]+/);
+
+      if (goalMatch && progressMatch) {
+        const goalNum = parseFloat(goalMatch[0].replace(/,/g, ''));
+        const progressNum = parseFloat(progressMatch[0].replace(/,/g, ''));
+        progressColor = progressNum >= goalNum ? '#00993d' : '#cc0000'; // green if met, red if not
+      } else if (progressStr.includes('complete') || progressStr.includes('done') || progressStr.includes('100')) {
+        progressColor = '#00993d'; // green
+      } else if (progressStr.includes('behind') || progressStr.includes('delayed') || progressStr.includes('not')) {
+        progressColor = '#cc0000'; // red
+      }
+
       html += `
-      <div class="item">
-        <div class="item-number">${index + 1}.</div>
-        <div class="item-content">${item.rockOwner}</div>
-        <div class="item-meta"><span class="item-label">Goal:</span> ${item.goal}</div>
-        <div class="item-meta"><span class="item-label">Progress:</span> ${item.progress}</div>
-      </div>`;
+          <tr style="background-color: ${bgColor};">
+            <td style="font-family: 'Open Sans', Arial, sans-serif; font-weight: 700; color: ${progressColor}; text-align: center; border: 1px solid #000000; padding: 6px 15px; vertical-align: top;"><strong>${owner}</strong></td>
+            <td style="font-family: 'Open Sans', Arial, sans-serif; color: ${progressColor}; border: 1px solid #000000; padding: 6px 15px; vertical-align: top;">${rockName}</td>
+            <td style="font-family: 'Open Sans', Arial, sans-serif; color: ${progressColor}; text-align: center; border: 1px solid #000000; padding: 6px 15px; vertical-align: top;">${goalValue}</td>
+            <td style="font-family: 'Open Sans', Arial, sans-serif; color: ${progressColor}; text-align: center; border: 1px solid #000000; padding: 6px 15px; vertical-align: top;">${progressValue}</td>
+          </tr>`;
+      rockRowIndex++;
     });
+
+    html += `
+        </tbody>
+      </table>`;
   } else {
     html += `<div class="no-items">No rock progress this week.</div>`;
   }
