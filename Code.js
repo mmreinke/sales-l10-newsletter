@@ -108,15 +108,15 @@ function generateHtmlBody(headlines, rocks, dateString) {
       background-color: #ffffff;
     }
     .header {
-      background: linear-gradient(135deg, ${primaryGreen} 0%, ${secondaryGreen} 100%);
+      background-color: #ffffff;
       padding: 30px 20px;
-      text-align: center;
+      text-align: left;
     }
     .header h1 {
       font-family: 'Oswald', Arial, sans-serif;
       font-size: 32px;
       font-weight: 600;
-      color: #ffffff;
+      color: ${primaryGreen};
       margin: 0 0 10px 0;
       text-transform: uppercase;
       letter-spacing: 1px;
@@ -124,8 +124,7 @@ function generateHtmlBody(headlines, rocks, dateString) {
     .header .date {
       font-family: 'Open Sans', Arial, sans-serif;
       font-size: 14px;
-      color: #ffffff;
-      opacity: 0.9;
+      color: #666666;
     }
     .content {
       padding: 30px 20px;
@@ -151,6 +150,7 @@ function generateHtmlBody(headlines, rocks, dateString) {
       width: 100%;
       border-collapse: collapse;
       margin-bottom: 30px;
+      border: 1px solid #000000;
     }
     .headlines-table th {
       font-family: 'Oswald', Arial, sans-serif;
@@ -162,29 +162,33 @@ function generateHtmlBody(headlines, rocks, dateString) {
       color: #ffffff;
       padding: 12px 15px;
       text-align: left;
-      border: none;
+      border: 1px solid #000000;
     }
     .headlines-table td {
       font-family: 'Open Sans', Arial, sans-serif;
       font-size: 14px;
       padding: 12px 15px;
-      border-bottom: 1px solid #e0e0e0;
+      border: 1px solid #000000;
       vertical-align: top;
     }
-    .headlines-table tr:last-child td {
-      border-bottom: none;
+    .headlines-table tbody tr:nth-child(odd) {
+      background-color: #ffffff;
     }
-    .headlines-table tr:nth-child(even) {
-      background-color: #f9f9f9;
+    .headlines-table tbody tr:nth-child(even) {
+      background-color: #d9d9d9;
     }
     .headlines-table td:first-child {
-      font-weight: 600;
-      color: ${headlineBlue};
-      width: 25%;
+      font-weight: 700;
+      color: #000000;
+      width: 30%;
     }
     .headlines-table td:last-child {
-      width: 75%;
+      width: 70%;
       line-height: 1.6;
+      color: #000000;
+    }
+    .headlines-table th {
+      white-space: nowrap;
     }
     .item {
       margin-bottom: 25px;
@@ -253,17 +257,20 @@ function generateHtmlBody(headlines, rocks, dateString) {
       <table class="headlines-table">
         <thead>
           <tr>
-            <th>Owner</th>
-            <th>Headline</th>
+            <th style="white-space: nowrap; width: 30%; text-align: center;">Team Member</th>
+            <th style="width: 70%;">Headline</th>
           </tr>
         </thead>
         <tbody>`;
 
-    headlines.forEach((item) => {
+    headlines.forEach((item, index) => {
+      const bgColor = (index % 2 === 0) ? '#f0f0f0' : '#ffffff';
+      // Replace line breaks with <br> tags for HTML display
+      const headlineWithBreaks = item.highlight.toString().replace(/\n/g, '<br>');
       html += `
-          <tr>
-            <td>${item.owner}</td>
-            <td>${item.highlight}</td>
+          <tr style="background-color: ${bgColor};">
+            <td style="font-family: 'Open Sans', Arial, sans-serif; font-weight: 700; color: #000000; width: 30%; text-align: center;"><strong>${item.owner}</strong></td>
+            <td style="font-family: 'Open Sans', Arial, sans-serif; color: #000000; width: 70%;">${headlineWithBreaks}</td>
           </tr>`;
     });
 
