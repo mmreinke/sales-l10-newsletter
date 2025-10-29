@@ -263,15 +263,21 @@ function generateHtmlBody(headlines, rocks, dateString) {
         </thead>
         <tbody>`;
 
-    headlines.forEach((item, index) => {
-      const bgColor = (index % 2 === 0) ? '#f0f0f0' : '#ffffff';
-      // Replace line breaks with <br> tags for HTML display
-      const headlineWithBreaks = item.highlight.toString().replace(/\n/g, '<br>');
-      html += `
+    let rowIndex = 0;
+    headlines.forEach((item) => {
+      // Split headline by line breaks
+      const headlineParts = item.highlight.toString().split('\n').filter(part => part.trim() !== '');
+
+      // Create a row for each part of the headline
+      headlineParts.forEach((headlinePart) => {
+        const bgColor = (rowIndex % 2 === 0) ? '#f0f0f0' : '#ffffff';
+        html += `
           <tr style="background-color: ${bgColor};">
             <td style="font-family: 'Open Sans', Arial, sans-serif; font-weight: 700; color: #000000; width: 30%; text-align: center;"><strong>${item.owner}</strong></td>
-            <td style="font-family: 'Open Sans', Arial, sans-serif; color: #000000; width: 70%;">${headlineWithBreaks}</td>
+            <td style="font-family: 'Open Sans', Arial, sans-serif; color: #000000; width: 70%;">${headlinePart.trim()}</td>
           </tr>`;
+        rowIndex++;
+      });
     });
 
     html += `
