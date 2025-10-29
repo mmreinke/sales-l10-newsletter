@@ -107,27 +107,8 @@ function generateHtmlBody(headlines, rocks, dateString) {
       margin: 0;
       background-color: #ffffff;
     }
-    .header {
-      background-color: #ffffff;
-      padding: 30px 20px;
-      text-align: left;
-    }
-    .header h1 {
-      font-family: 'Oswald', Arial, sans-serif;
-      font-size: 32px;
-      font-weight: 600;
-      color: ${primaryGreen};
-      margin: 0 0 10px 0;
-      text-transform: uppercase;
-      letter-spacing: 1px;
-    }
-    .header .date {
-      font-family: 'Open Sans', Arial, sans-serif;
-      font-size: 14px;
-      color: #666666;
-    }
     .content {
-      padding: 30px 20px;
+      padding: 20px;
     }
     .section-title {
       font-family: 'Oswald', Arial, sans-serif;
@@ -243,11 +224,6 @@ function generateHtmlBody(headlines, rocks, dateString) {
 </head>
 <body>
   <div class="container">
-    <div class="header">
-      <h1>Sales Team Newsletter</h1>
-      <div class="date">Week of ${dateString}</div>
-    </div>
-
     <div class="content">
       <!-- Headlines Section -->
       <h2 class="section-title headlines">Headlines</h2>`;
